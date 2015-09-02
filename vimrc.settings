@@ -1,0 +1,87 @@
+" {{{ settings ---------------------------------------------------------
+set nocompatible
+set showcmd
+set modeline
+set laststatus=2
+set ruler             " line number in modeline
+set list
+set colorcolumn=73
+set cursorline
+set relativenumber
+set noet sts=0 sw=4 ts=4
+set bs=2              " Allow backspacing over everything in insert mode
+set nowrap
+set hlsearch
+set t_Co=256
+set wildignorecase
+set wildmode=longest,list " ,full
+" set wildmenu " only usefull with wildmode full
+set listchars=tab:\|\ ,extends:❯,precedes:❮,nbsp:␣,trail:·,eol:↪
+set completeopt=menuone,longest,preview
+set background=dark
+set noshowmode        " if using airline
+set fileformats=unix  " unix line end 
+set sessionoptions=blank,buffers,curdir,folds,help,tabpages
+" }}} ------------------------------------------------------------------
+
+" {{{ commands
+command TfixColors hi Normal ctermbg=234 | hi SpecialKey ctermfg=darkgrey | hi NonText ctermfg=darkgrey | hi ColorColumn ctermbg=darkgrey | set background=dark
+command TremoveTrailingSpaces :%s/\s\+$//g
+command TfindWrongSpaces /^\t*\ \+\|^\s\+$
+command TcopyMode set nonu nornu nowrap nolist
+command TeditMode set rnu nowrap list | RfixColors
+" }}} ------------------------------------------------------------------
+
+" {{{ build in explorer settings ---------------------------------------
+" Toggle Vexplore with Ctrl-E
+function! ToggleVExplorer()
+  if exists("t:expl_buf_num")
+      let expl_win_num = bufwinnr(t:expl_buf_num)
+      if expl_win_num != -1
+          let cur_win_nr = winnr()
+          exec expl_win_num . 'wincmd w'
+          close
+          exec cur_win_nr . 'wincmd w'
+          unlet t:expl_buf_num
+      else
+          unlet t:expl_buf_num
+      endif
+  else
+      exec '1wincmd w'
+      Vexplore
+      let t:expl_buf_num = bufnr("%")
+  endif
+endfunction
+" TODO: remove this mapping
+map <silent> <C-E> :call ToggleVExplorer()<CR>
+
+" Hit enter in the file browser to open the selected
+" file with :vsplit to the right of the browser.
+let g:netrw_browse_split = 4
+let g:netrw_altv = 1
+
+" Default to tree mode
+let g:netrw_liststyle=3
+" }}} ------------------------------------------------------------------
+
+syntax on
+filetype plugin indent on
+colorscheme elflord
+
+TfixColors
+TfixColors " TODO: have to call it twice for background to take effect!?
+let g:triiuarkSessionFilename = ''
+function TriiuarkSessionSave()
+	let fname=tempname()
+	echom fname
+	echom g:triiuarkSessionFilename
+	execute 'mksession' fnameescape(fname)
+endfunction
+function TriiuarkSessionLoad(filename)
+	let g:triiuarkSessionFilename=a:filename
+	execute 'source' fnameescape(g:triiuarkSessionFilename)
+endfunction
+command TsaveSession call TriiuarkSessionSave()
+command! -nargs=1 -complete=file RloadSession call TriiuarkSessionLoad(<q-args>)
+
+" vim: set foldmethod=marker :

@@ -1,0 +1,123 @@
+" {{{ install NeoBundle automagically
+command TfixBundleRights execute '!cd ' . s:bundle_dir . ' && chown -R root:users . && find . -type d | xargs chmod 775 && find . -type f | xargs chmod 664'
+let s:bundle_dir = $VIM_BUNDLE_DIR
+if empty(s:bundle_dir)
+	let s:bundle_dir = '/usr/local/share/vim/bundle'
+endif
+if empty(glob(s:bundle_dir . '/neobundle.vim'))
+	execute '!mkdir -p ' . s:bundle_dir . ' && cd ' . s:bundle_dir . ' && git clone https://github.com/Shougo/neobundle.vim.git'
+endif
+" }}}
+
+" {{{ NeoBundle setup pre ----------------------------------------------
+if has('vim_starting')
+	if &compatible
+		set nocompatible               " Be iMproved
+	endif
+	execute 'set runtimepath+='.s:bundle_dir.'/neobundle.vim/'
+endif
+call neobundle#begin(expand(s:bundle_dir))
+NeoBundleFetch 'Shougo/neobundle.vim'
+" }}} ------------------------------------------------------------------
+
+" {{{ load plugins -----------------------------------------------------
+NeoBundle 'Shougo/neocomplete.vim'
+NeoBundle 'Shougo/neosnippet.vim'
+NeoBundle 'Shougo/neosnippet-snippets'
+NeoBundle 'Shougo/unite.vim'
+NeoBundle 'jamessan/vim-gnupg'
+NeoBundle 'vimoutliner/vimoutliner'
+NeoBundle 'vim-scripts/VOoM'
+NeoBundle 'tpope/vim-fugitive'
+NeoBundle 'majutsushi/tagbar'
+NeoBundle 'mbbill/undotree'
+NeoBundle 'scrooloose/syntastic'
+NeoBundle 'bling/vim-airline'
+NeoBundle 'evidens/vim-twig'
+"NeoBundle 'scrooloose/nerdtree'
+NeoBundle 'mhinz/vim-startify'
+NeoBundle 'guns/xterm-color-table.vim'
+NeoBundle 'terryma/vim-multiple-cursors'
+NeoBundle 'shawncplus/phpcomplete.vim'
+" }}} ------------------------------------------------------------------
+
+" {{{ NeoBundle setup post ---------------------------------------------
+call neobundle#end()
+filetype plugin indent on
+NeoBundleCheck
+" }}} ------------------------------------------------------------------
+
+" {{{ neocomplete settings ---------------------------------------------
+let g:neocomplete#enable_at_startup = 1
+let g:neocomplete#enable_smart_case = 1
+let g:neocomplete#sources#syntax#min_keyword_length = 1
+if !exists('g:neocomplete#sources#omni#input_patterns')
+	let g:neocomplete#sources#omni#input_patterns = {}
+endif
+let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
+" }}} ------------------------------------------------------------------
+
+" {{{ unite setttings --------------------------------------------------
+" Initialize Unite's global list of menus
+if !exists('g:unite_source_menu_menus')
+	let g:unite_source_menu_menus = {}
+endif
+
+" Create an entry for our new menu of commands
+let g:unite_source_menu_menus.commands = {
+\	'description': 'My Commands'
+\ }
+
+" Define the function that maps our command labels to the commands they execute
+function! g:unite_source_menu_menus.commands.map(key, value)
+	return {
+			\   'word': a:key,
+			\   'kind': 'command',
+			\   'action__command': a:value
+			\ }
+endfunction
+
+" {{{ my menu
+let g:unite_source_menu_menus.commands.command_candidates = [
+\	['~~ NERDTree', 'NERDTreeToggle'],
+\	['~~ VOom', 'VoomToggle'],
+\	['~~ UndoTree', 'UndotreeToggle'],
+\	['~~ Tagbar', 'TagbarToggle'],
+\	['Git Blame', 'Gblame'],
+\	['Remove Trailing Spaces', 'RremoveTrailingSpaces'],
+\	['Search Wrong Leading Spaces', 'RfindWrongSpaces'],
+\	['!! Number (set invnumber)', 'set invnumber'],
+\	['!! RelativeNumber (set invrelativenumber)', 'set invrelativenumber'],
+\	['!! Highlight Search (set invhlsearch)', 'set invhlsearch'],
+\	['!! Wrap(set invwrap)', 'set invwrap'],
+\	['!! List (set invlist)', 'set invlist'],
+\	['!! Cursorline (set invcursorline)', 'set invcursorline'],
+\	['CopyMode', 'RcopyMode'],
+\	['EditMode', 'ReditMode']
+\ ]
+" }}}
+" }}} ------------------------------------------------------------------
+
+" {{{ airline settings -------------------------------------------------
+"let g:airline_symbols = {}
+let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#enabled = 1
+"call airline#parts#define_accent('mode', 'bold')
+" }}} ------------------------------------------------------------------
+
+" {{{ multiple-cursors settings
+" Called once right before you start selecting multiple cursors
+function! Multiple_cursors_before()
+	if exists(':NeoCompleteLock')==2
+		exe 'NeoCompleteLock'
+	endif
+endfunction
+
+" Called once only when the multiple selection is canceled (default <Esc>)
+function! Multiple_cursors_after()
+	if exists(':NeoCompleteUnlock')==2
+		exe 'NeoCompleteUnlock'
+	endif
+endfunction
+" }}}
+" vim: set foldmethod=marker :
