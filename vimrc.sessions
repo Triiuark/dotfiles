@@ -2,10 +2,14 @@
 let g:triiuark_session_path="~/.vim/sessions/"
 let g:triiuarkSessionFilename = ''
 function! TriiuarkSessionSave()
-	let fname=tempname()
-	echom fname
+	let parts=split(getcwd(), '/')
+	let dir=expand(g:triiuark_session_path.parts[-1])
+	echom dir
+	silent execute '!mkdir -p '.fnameescape(dir)
+	let fname=dir.'/'.parts[-1]
+	redraw!
 	echom g:triiuarkSessionFilename
-	execute 'mksession' fnameescape(fname)
+	execute 'mksession!' fnameescape(fname)
 endfunction
 function! TriiuarkSessionLoad(filename)
 	let g:triiuarkSessionFilename=a:filename
