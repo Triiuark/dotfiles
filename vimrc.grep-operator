@@ -1,0 +1,26 @@
+" taken from http://learnvimscriptthehardway.stevelosh.com/
+nnoremap <leader>g :set operatorfunc=<SID>TriiuarkGrepOperator<cr>g@
+vnoremap <leader>g :<c-u>call <SID>TriiuarkGrepOperator(visualmode())<cr>
+
+function! s:TriiuarkGrepOperator(type)
+	let origRegister = @@
+
+	if a:type ==# 'v'
+		normal! `<v`>y
+	elseif a:type ==# 'char'
+		normal! `[v`]y
+	else
+		return
+	endif
+
+	silent execute "grep! -Rs " . shellescape(@@) . " ."
+	copen
+
+	redraw!
+
+	echom "grep: " . shellescape(@@) . " in " . getcwd()
+
+	let @@ = origRegister
+
+endfunction
+

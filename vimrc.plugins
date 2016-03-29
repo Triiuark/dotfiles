@@ -1,5 +1,5 @@
 " {{{ install NeoBundle automagically
-command TfixBundleRights execute '!cd ' . s:bundle_dir . ' && chown -R root:users . && find . -type d | xargs chmod 775 && find . -type f | xargs chmod 664'
+command! TfixBundleRights execute '!cd ' . s:bundle_dir . ' && chown -R root:users . && find . -type d | xargs chmod 775 && find . -type f | xargs chmod 664'
 let s:bundle_dir = $VIM_BUNDLE_DIR
 if empty(s:bundle_dir)
 	let s:bundle_dir = '/usr/local/share/vim/bundle'
@@ -39,6 +39,10 @@ NeoBundle 'mhinz/vim-startify'
 NeoBundle 'guns/xterm-color-table.vim'
 NeoBundle 'terryma/vim-multiple-cursors'
 NeoBundle 'shawncplus/phpcomplete.vim'
+NeoBundle 'easymotion/vim-easymotion'
+NeoBundle 'vim-php/tagbar-phpctags.vim'
+NeoBundle 'godlygeek/tabular.git'
+NeoBundle 'mxw/vim-xhp'
 " }}} ------------------------------------------------------------------
 
 " {{{ NeoBundle setup post ---------------------------------------------
@@ -119,5 +123,10 @@ function! Multiple_cursors_after()
 		exe 'NeoCompleteUnlock'
 	endif
 endfunction
+" }}}
+
+" {{{ phpctags settings
+let s:path=expand('<sfile>:p:h:h')
+let g:tagbar_phpctags_bin=s:path . '/phpctags'
 " }}}
 " vim: set foldmethod=marker :

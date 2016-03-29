@@ -20,16 +20,17 @@ set listchars=tab:\|\ ,extends:❯,precedes:❮,nbsp:␣,trail:·,eol:↪
 set completeopt=menuone,longest,preview
 set background=dark
 set noshowmode        " if using airline
-set fileformats=unix  " unix line end 
+set fileformats=unix  " unix line end
 set sessionoptions=blank,buffers,curdir,folds,help,tabpages
 " }}} ------------------------------------------------------------------
 
 " {{{ commands
-command TfixColors hi Normal ctermbg=234 | hi SpecialKey ctermfg=darkgrey | hi NonText ctermfg=darkgrey | hi ColorColumn ctermbg=darkgrey | set background=dark
-command TremoveTrailingSpaces :%s/\s\+$//g
-command TfindWrongSpaces /^\t*\ \+\|^\s\+$
-command TcopyMode set nonu nornu nowrap nolist
-command TeditMode set rnu nowrap list | RfixColors
+command! TfixColors hi Normal ctermbg=234 | hi SpecialKey ctermfg=darkgrey | hi NonText ctermfg=darkgrey | hi ColorColumn ctermbg=darkgrey | set background=dark
+command! TremoveTrailingSpaces :%s/\s\+$//g
+command! TfindWrongSpaces /^\t*\ \+\|^\s\+$
+command! TcopyMode set nonu nornu nowrap nolist
+command! TeditMode set rnu nowrap list | RfixColors
+command! -nargs=1 TwindowTitle execute '!echo -ne "\033]2;<args>\007"'
 " }}} ------------------------------------------------------------------
 
 " {{{ build in explorer settings ---------------------------------------
@@ -68,20 +69,22 @@ syntax on
 filetype plugin indent on
 colorscheme elflord
 
+" {{{ my common typos --------------------------------------------------
+iabbrev resutl result
+" }}} ------------------------------------------------------------------
+
+" {{{ learning vim script ----------------------------------------------
+let mapleader="t"
+let maplocalleader="t"
+autocmd FileType javascript nnoremap <buffer> <localleader>c I//<esc>
+autocmd FileType php nnoremap <buffer> <localleader>c I//<esc>
+autocmd FileType html nnoremap <buffer> <localleader>c I<!-- <esc>A --><esc>
+autocmd FileType python     nnoremap <buffer> <localleader>c I#<esc>
+
+" nnoremap <leader>g :silent execute "grep! -Rs " . shellescape(expand("<cWORD>")) . " ."<cr>:copen<cr>:redraw!<cr>
+" }}} ------------------------------------------------------------------
+
 TfixColors
 TfixColors " TODO: have to call it twice for background to take effect!?
-let g:triiuarkSessionFilename = ''
-function TriiuarkSessionSave()
-	let fname=tempname()
-	echom fname
-	echom g:triiuarkSessionFilename
-	execute 'mksession' fnameescape(fname)
-endfunction
-function TriiuarkSessionLoad(filename)
-	let g:triiuarkSessionFilename=a:filename
-	execute 'source' fnameescape(g:triiuarkSessionFilename)
-endfunction
-command TsaveSession call TriiuarkSessionSave()
-command! -nargs=1 -complete=file RloadSession call TriiuarkSessionLoad(<q-args>)
 
 " vim: set foldmethod=marker :

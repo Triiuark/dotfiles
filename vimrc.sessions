@@ -1,0 +1,17 @@
+
+let g:triiuark_session_path="~/.vim/sessions/"
+let g:triiuarkSessionFilename = ''
+function! TriiuarkSessionSave()
+	let fname=tempname()
+	echom fname
+	echom g:triiuarkSessionFilename
+	execute 'mksession' fnameescape(fname)
+endfunction
+function! TriiuarkSessionLoad(filename)
+	let g:triiuarkSessionFilename=a:filename
+	execute 'source' fnameescape(g:triiuarkSessionFilename)
+endfunction
+command! TsaveSession call TriiuarkSessionSave()
+command! -nargs=1 -complete=file RloadSession call TriiuarkSessionLoad(<q-args>)
+
+
