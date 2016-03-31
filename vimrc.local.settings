@@ -1,0 +1,3 @@
+let g:triuark_bundle_dir                     = '/usr/local/share/vim/bundle/'
+let g:triiuark_session_default_ctags_command = 'ctags -R --exclude=.git'
+let g:triiuark_session_save_path             = '~/.vim/sessions'

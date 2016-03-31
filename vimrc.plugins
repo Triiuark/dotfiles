@@ -1,9 +1,6 @@
 " {{{ install NeoBundle automagically
 command! TfixBundleRights execute '!cd ' . s:bundle_dir . ' && chown -R root:users . && find . -type d | xargs chmod 775 && find . -type f | xargs chmod 664'
-let s:bundle_dir = $VIM_BUNDLE_DIR
-if empty(s:bundle_dir)
-	let s:bundle_dir = '/usr/local/share/vim/bundle'
-endif
+let s:bundle_dir = get(g:, 'triuark_bundle_dir', '/usr/local/share/vim/bundle')
 if empty(glob(s:bundle_dir . '/neobundle.vim'))
 	execute '!mkdir -p ' . s:bundle_dir . ' && cd ' . s:bundle_dir . ' && git clone https://github.com/Shougo/neobundle.vim.git'
 endif

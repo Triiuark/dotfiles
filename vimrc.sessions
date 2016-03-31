@@ -1,6 +1,8 @@
-let g:triiuark_session_default_ctags_command='/home/reba/Desktop/sync/phpctags -R --exclude=.git'
-let g:triiuark_session_path="~/.vim/sessions/"
-let g:triiuarkSessionFilename = ''
+let s:default_ctags_command          = get(g:, 'triiuark_session_default_ctags_command', 'ctags -R --exclude=.git')
+let s:path                           = get(g:, 'triuark_session_save_path', '~/.vim/sessions').'/'
+let s:dir                            = ''
+let g:triiuark_session_file          = ''
+let g:triiuark_session_ctags_command = ''
 function! TriiuarkSessionSave()
 	let parts = split(getcwd(), '/')
 	let dir   = ''
@@ -12,43 +14,44 @@ function! TriiuarkSessionSave()
 		let dir = 'ROOT'
 	endif
 
-	let dir = expand(g:triiuark_session_path.dir)
+	let dir = expand(s:path.dir)
 	echom dir
 	silent execute '!mkdir -p '.fnameescape(dir)
 	let fname = dir.'/session.vim'
 	execute 'mksession!' fnameescape(fname)
 	if empty(glob(dir . '/settings.vim'))
-		silent execute '!echo "let g:triiuark_session_ctags_command='''.g:triiuark_session_default_ctags_command.' -f '.fnameescape(dir.'/tags').' '.fnameescape(getcwd()).'''" > '.fnameescape(dir.'/settings.vim')
+		silent execute '!echo "let g:triiuark_session_ctags_command='''.s:default_ctags_command.' -f '.fnameescape(dir.'/tags').' '.fnameescape(getcwd()).'''" > '.fnameescape(dir.'/settings.vim')
 		execute 'tabe '.fnameescape(dir.'/settings.vim')
 	endif
+	let s:dir = dir
 	redraw!
 endfunction
 function! TriiuarkSessionLoad(directory)
-	let g:triiuark_session_dir = expand(g:triiuark_session_path.'/'.a:directory)
-	let g:triiuarkSessionFilename = g:triiuark_session_dir.'/session.vim'
-	execute 'source' fnameescape(g:triiuarkSessionFilename)
-	if !empty(glob(g:triiuark_session_dir.'/tags'))
-		execute 'set tags='.fnameescape(g:triiuark_session_dir.'/tags')
+	let s:dir = expand(s:path.'/'.a:directory)
+	let g:triiuark_session_file = s:dir.'/session.vim'
+	execute 'source' fnameescape(g:triiuark_session_file)
+	if !empty(glob(s:dir.'/tags'))
+		execute 'set tags='.fnameescape(s:dir.'/tags')
 	endif
 	autocmd VimLeave * call TriiuarkSessionSave()
 endfunction
 function! TriiuarkSessionListSessions(A,L,P)
-	return system('ls -1 '.fnameescape(g:triiuark_session_path))
+	return system('ls -1 '.fnameescape(s:path))
 endfunction
 function! TriiuarkSessionTags()
-	execute 'source '.fnameescape(g:triiuark_session_dir.'/settings.vim')
+	execute 'source '.fnameescape(s:dir.'/settings.vim')
 	echom 'command: '.g:triiuark_session_ctags_command
 	if strlen(g:triiuark_session_ctags_command)
 		execute '!'.g:triiuark_session_ctags_command
-		if !empty(glob(g:triiuark_session_dir.'/tags'))
-			execute 'set tags='.fnameescape(g:triiuark_session_dir.'/tags')
+		if !empty(glob(s:dir.'/tags'))
+			execute 'set tags='.fnameescape(s:dir.'/tags')
 		endif
 	else
 		echoerr 'var not found'
 	endif
 endfunction
 function! TriiuarkSessionSettings()
-	execute 'tabe '.fnameescape(g:triiuark_session_dir.'/settings.vim')
+	execute 'tabe '.fnameescape(s:dir.'/settings.vim')
 endfunction
 command! Tsessionsave call TriiuarkSessionSave()
 command! -nargs=1 -complete=custom,TriiuarkSessionListSessions Tsessionload call TriiuarkSessionLoad(<q-args>)
