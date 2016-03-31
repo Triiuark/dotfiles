@@ -1,5 +1,5 @@
 let s:default_ctags_command          = get(g:, 'triiuark_session_default_ctags_command', 'ctags -R --exclude=.git')
-let s:path                           = get(g:, 'triuark_session_save_path', '~/.vim/sessions').'/'
+let s:path                           = get(g:, 'triiuark_session_save_path', '~/.vim/sessions').'/'
 let s:dir                            = ''
 let g:triiuark_session_file          = ''
 let g:triiuark_session_ctags_command = ''
@@ -15,7 +15,6 @@ function! TriiuarkSessionSave()
 	endif
 
 	let dir = expand(s:path.dir)
-	echom dir
 	silent execute '!mkdir -p '.fnameescape(dir)
 	let fname = dir.'/session.vim'
 	execute 'mksession!' fnameescape(fname)
@@ -40,7 +39,6 @@ function! TriiuarkSessionListSessions(A,L,P)
 endfunction
 function! TriiuarkSessionTags()
 	execute 'source '.fnameescape(s:dir.'/settings.vim')
-	echom 'command: '.g:triiuark_session_ctags_command
 	if strlen(g:triiuark_session_ctags_command)
 		execute '!'.g:triiuark_session_ctags_command
 		if !empty(glob(s:dir.'/tags'))

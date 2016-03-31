@@ -1,2 +1,4 @@
 vimrc.local.settings
 phpctags
+bundle
+sessions
