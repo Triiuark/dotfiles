@@ -123,7 +123,7 @@ endfunction
 " }}}
 
 " {{{ phpctags settings
-let s:path=expand('<sfile>:p:h:h')
+let s:path=expand('<sfile>:p:h')
 let g:tagbar_phpctags_bin=s:path . '/phpctags'
 " }}}
 " vim: set foldmethod=marker :
