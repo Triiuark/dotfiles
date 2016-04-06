@@ -29,7 +29,7 @@ command! TfixColors hi Normal ctermbg=234 | hi SpecialKey ctermfg=darkgrey | hi 
 command! TremoveTrailingSpaces :%s/\s\+$//g
 command! TfindWrongSpaces /^\t*\ \+\|^\s\+$
 command! TcopyMode set nonu nornu nowrap nolist
-command! TeditMode set rnu nowrap list | RfixColors
+command! TeditMode set rnu nowrap list | TfixColors
 command! -nargs=1 TwindowTitle execute '!echo -ne "\033]2;<args>\007"'
 " }}} ------------------------------------------------------------------
 
