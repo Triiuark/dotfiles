@@ -43,7 +43,7 @@ function! bufftree#Build()
 			endif
 		endfor
 	endfor
-	let s:content = split(bufftree#Get(s:tree), '\v\n')
+	let s:content = split(bufftree#Get(s:tree, 0, 0, ''), '\v\n')
 
 
 	if bufwinnr('__BUFF_TREE__') ># -1
@@ -71,19 +71,37 @@ function! bufftree#Toggle()
 	setlocal readonly
 	setlocal nomodifiable
 endfunction
-function! bufftree#Get(tree)
+function! bufftree#Get(tree, level, parentVisible, parentName)
 	let content = ''
-	"if (len(a:tree.dirs) ># 1 || len(a:tree.files) ># 0)
-		if a:tree.level > -1 && a:tree.name !=# '.'
-			let content .= bufftree#StrPad(a:tree.name, a:tree.level, 0)."\n"
+	let level = a:level
+	let parentVisible = a:parentVisible
+	let parentName    = a:parentName .'/'.a:tree.name
+	if a:parentName ==# '/'
+		if a:tree.name !=# '.'
+			let parentName = '/'.a:tree.name
+		else
+			let parentName = a:tree.name
 		endif
-	"endif
+	endif
+	if (parentVisible || len(a:tree.dirs) ># 1 || len(a:tree.files) ># 0)
+		if a:tree.level > -1
+			if parentVisible
+				let parentName = a:tree.name
+			endif
+			let content .= bufftree#StrPad(parentName, level, 0)."\n"
+			let parentVisible = 1
+		else
+			let level -= 1
+		endif
+	else
+		let level -= 1
+	endif
 	let dirs = get(a:tree, 'dirs', [])
 	for dir in dirs
-		let content .= bufftree#Get(dir)
+		let content .= bufftree#Get(dir, level + 1, parentVisible, parentName)
 	endfor
 	for file in a:tree.files
-		let content .= bufftree#StrPad(file.name, a:tree.level + 1, 0).' ['.file.buffer.']'."\n"
+		let content .= bufftree#StrPad(file.name, level + 1, 0).' ['.file.buffer.']'."\n"
 		"echom bufftree#StrPad(file.dir, 4*a:tree.level + 4, 0)
 	endfor
 	return content
